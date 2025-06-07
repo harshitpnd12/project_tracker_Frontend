@@ -30,7 +30,7 @@ const commentReducer = (state = initialState, action) => {
           (comment) => comment.id !== action.commentId
         ),
       };
-    case actionTypes.FETCH_COMMENT_SUCCESS:
+    case actionTypes.FETCH_COMMENTS_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -38,7 +38,7 @@ const commentReducer = (state = initialState, action) => {
       };
     case actionTypes.CREATE_COMMENT_FAILURE:
     case actionTypes.DELETE_COMMENT_FAILURE:
-    case actionTypes.FETCH_COMMENT_FAILURE:
+    case actionTypes.FETCH_COMMENTS_FAILURE:
       return {
         ...state,
         loading: false,

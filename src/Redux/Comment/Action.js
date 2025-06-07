@@ -39,18 +39,18 @@ export const deleteComment = (commentId) => {
 
 export const fetchComments = (issueId) => {
   return async (dispatch) => {
-    dispatch({ type: actionTypes.FETCH_COMMENT_REQUEST });
+    dispatch({ type: actionTypes.FETCH_COMMENTS_REQUEST });
     try {
       const response = await api.get(`/api/comments/${issueId}`);
       dispatch({
-        type: actionTypes.FETCH_COMMENT_SUCCESS,
+        type: actionTypes.FETCH_COMMENTS_SUCCESS,
         comments: response.data,
       });
       console.log("fetched comments ", response.data);
     } catch (error) {
       console.log("error ", error);
       dispatch({
-        type: actionTypes.FETCH_COMMENT_FAILURE,
+        type: actionTypes.FETCH_COMMENTS_FAILURE,
         error: error.message,
       });
     }

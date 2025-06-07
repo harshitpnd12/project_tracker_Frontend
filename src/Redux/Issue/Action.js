@@ -116,3 +116,22 @@ export const deleteIssue = (issueId) => {
     }
   };
 };
+
+export const updateIssue = (id, updatedData) => {
+  return async (dispatch) => {
+    dispatch({ type: actionTypes.UPDATE_ISSUE_REQUEST });
+    try {
+      const response = await api.put(`/api/issues/${id}`, updatedData);
+      console.log("issue updated successfully", response.data);
+      dispatch({
+        type: actionTypes.UPDATE_ISSUE_SUCCESS,
+        issue: response.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: actionTypes.UPDATE_ISSUE_FAILURE,
+        error: error.message,
+      });
+    }
+  };
+};

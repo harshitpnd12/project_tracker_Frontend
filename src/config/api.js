@@ -1,12 +1,41 @@
+// import axios from "axios";
+
+// export const API_BASE_URL = "https://project-tracker-backend-6hnh.onrender.com";
+
+// // const api = axios.create({ baseURL: API_BASE_URL });
+// const api = axios.create({
+//   baseURL: API_BASE_URL,
+//   withCredentials: true, // <--- This is important for CORS with credentials
+// });
+
+// const jwt = localStorage.getItem("jwt");
+
+// api.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+// api.defaults.headers.post["Content-Type"] = "application/json";
+
+// export default api;
+
 import axios from "axios";
 
 export const API_BASE_URL = "https://project-tracker-backend-6hnh.onrender.com";
 
-const api = axios.create({ baseURL: API_BASE_URL });
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Important for CORS with cookies/auth
+});
 
-const jwt = localStorage.getItem("jwt");
-
-api.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
 api.defaults.headers.post["Content-Type"] = "application/json";
+
+// Interceptor to set Authorization header dynamically
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default api;

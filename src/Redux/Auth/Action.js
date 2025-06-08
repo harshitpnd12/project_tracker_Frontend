@@ -1,39 +1,15 @@
-import axios from "axios";
 import api, { API_BASE_URL } from "../../config/api";
 import {
-  GET_USER_REQUEST,
-  GET_USER_SUCCESS,
-  LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  LOGOUT,
-  REGISTER_FAILURE,
+  LOGIN_FAILURE,
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
+  REGISTER_FAILURE,
+  GET_USER_REQUEST,
+  GET_USER_SUCCESS,
+  LOGOUT,
 } from "./ActionTypes";
-
-export const register = (userData) => async (dispatch) => {
-  dispatch({ type: REGISTER_REQUEST });
-  try {
-    const { data } = await api.post(`${API_BASE_URL}/auth/signup`, userData);
-
-    if (data.jwt) {
-      localStorage.setItem("jwt", data.jwt);
-      dispatch({ type: REGISTER_SUCCESS, payload: data });
-    }
-
-    console.log("register success", data);
-    return data;
-  } catch (error) {
-    console.error("register error", error);
-    dispatch({
-      type: REGISTER_FAILURE,
-      payload:
-        error.response?.data?.message || error.message || "Registration failed",
-    });
-    throw error;
-  }
-};
 
 export const login = (userData) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
@@ -45,10 +21,30 @@ export const login = (userData) => async (dispatch) => {
     }
     return data;
   } catch (error) {
-    dispatch({
-      type: LOGIN_FAILURE,
-      payload: error.response?.data?.message || "Login failed",
-    });
+    let errorMessage = "Login failed";
+    if (error.response) {
+      errorMessage = error.response.data.message || errorMessage;
+    }
+    dispatch({ type: LOGIN_FAILURE, payload: errorMessage });
+    throw error;
+  }
+};
+
+export const register = (userData) => async (dispatch) => {
+  dispatch({ type: REGISTER_REQUEST });
+  try {
+    const { data } = await api.post(`${API_BASE_URL}/auth/signup`, userData);
+    if (data.jwt) {
+      localStorage.setItem("jwt", data.jwt);
+      dispatch({ type: REGISTER_SUCCESS, payload: data });
+    }
+    return data;
+  } catch (error) {
+    let errorMessage = "Registration failed";
+    if (error.response) {
+      errorMessage = error.response.data.message || errorMessage;
+    }
+    dispatch({ type: REGISTER_FAILURE, payload: errorMessage });
     throw error;
   }
 };
@@ -56,21 +52,16 @@ export const login = (userData) => async (dispatch) => {
 export const getUser = () => async (dispatch) => {
   dispatch({ type: GET_USER_REQUEST });
   try {
-    const { data } = await api.get(`${API_BASE_URL}/api/users/profile`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-      },
-    });
-
+    const { data } = await api.get(`${API_BASE_URL}/api/users/profile`);
     dispatch({ type: GET_USER_SUCCESS, payload: data });
-
-    console.log("getuser success", data);
+    return data;
   } catch (error) {
-    console.log(error);
+    console.error("Failed to fetch user", error);
+    throw error;
   }
 };
 
-export const logout = () => async (dispatch) => {
+export const logout = () => (dispatch) => {
+  localStorage.removeItem("jwt");
   dispatch({ type: LOGOUT });
-  localStorage.clear();
 };

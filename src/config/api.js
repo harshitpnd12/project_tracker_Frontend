@@ -4,12 +4,12 @@ export const API_BASE_URL = "https://project-tracker-backend-6hnh.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Important for CORS with cookies/auth
+  withCredentials: true, // IMPORTANT: allows sending cookies/credentials
 });
 
 api.defaults.headers.post["Content-Type"] = "application/json";
 
-// Interceptor to set Authorization header dynamically
+// Interceptor to attach JWT token in Authorization header
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("jwt");

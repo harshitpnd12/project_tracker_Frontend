@@ -4,6 +4,7 @@ export const API_BASE_URL = "https://project-tracker-backend-6hnh.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
